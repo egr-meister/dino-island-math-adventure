@@ -23,7 +23,7 @@
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#7BC950"
+        "backgroundColor": "#FFF9E8"
       }
     },
     "plugins": ["./plugins/withDinoAndroidRelease.js"]
