@@ -38,7 +38,7 @@ function Tab({ label, active, onPress }) {
 
 /* ----------------------- Friendly Calculator ----------------------- */
 
-function CalcKey({ label, onPress, kind = 'digit', wide }) {
+function CalcKey({ label, onPress, kind = 'digit', wide, style }) {
   const bg =
     kind === 'op' ? palette.volcano : kind === 'action' ? palette.sand : palette.white;
   const color = kind === 'op' ? palette.white : palette.text;
@@ -50,6 +50,7 @@ function CalcKey({ label, onPress, kind = 'digit', wide }) {
         shadow.soft,
         { backgroundColor: bg },
         wide && styles.keyWide,
+        style,
         pressed && styles.keyPressed,
       ]}
       accessibilityRole="button"
@@ -114,7 +115,7 @@ function FriendlyCalculator({ mode }) {
 
       <View style={styles.opsRow}>
         {operators.map((op) => (
-          <CalcKey key={op} label={op} kind="op" onPress={() => onOp(op)} />
+          <CalcKey key={op} label={op} kind="op" onPress={() => onOp(op)} style={styles.opKey} />
         ))}
       </View>
 
@@ -293,8 +294,17 @@ const styles = StyleSheet.create({
   },
   opsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: spacing.sm,
     marginBottom: spacing.sm,
+  },
+  // Operator keys share the row equally, so 2 (Little) or 4 (Explorer)
+  // operators always fit the width instead of overflowing.
+  opKey: {
+    width: 'auto',
+    flex: 1,
+    aspectRatio: undefined,
+    height: 64,
+    marginBottom: 0,
   },
   keypad: {
     flexDirection: 'row',
