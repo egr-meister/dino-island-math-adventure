@@ -1,0 +1,96 @@
+name: Android Build (APK + AAB)
+
+# Builds a signed release APK and AAB on every push to main, and on demand.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build release APK & AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Get the source.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Node.js (Expo / React Native toolchain).
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      # 3. Java 17 (required by the Android Gradle Plugin).
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 4. Android SDK.
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 5. Install JS dependencies.
+      - name: Install dependencies
+        run: npm install
+
+      # 6. Generate the native Android project from the Expo config.
+      #    The config plugin enables ProGuard, resource shrinking, the
+      #    release signing config and writes proguard-rules.pro.
+      - name: Prebuild Android project
+        run: npx expo prebuild --platform android --no-install
+
+      # 7. Decode the keystore from a base64 GitHub Secret.
+      - name: Decode release keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+
+      # 8. Make the Gradle wrapper executable.
+      - name: Grant execute permission for gradlew
+        run: chmod +x android/gradlew
+
+      # 9. Build the release APK.
+      - name: Build release APK
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/android/app/release.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      # 10. Build the release AAB (App Bundle).
+      - name: Build release AAB
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/android/app/release.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --no-daemon
+
+      # 11. Rename outputs to friendly names.
+      - name: Rename build outputs
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk dino-island-release.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab dino-island-release.aab
+
+      # 12. Upload the APK as an artifact.
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dino-island-release-apk
+          path: dino-island-release.apk
+          if-no-files-found: error
+
+      # 13. Upload the AAB as an artifact.
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dino-island-release-aab
+          path: dino-island-release.aab
+          if-no-files-found: error

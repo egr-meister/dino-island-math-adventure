@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Dino Island Math Adventure",
+    "slug": "dino-island-math-adventure",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF9E8"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dinoisland.mathadventure"
+    },
+    "android": {
+      "package": "com.dinoisland.mathadventure",
+      "versionCode": 1,
+      "orientation": "portrait",
+      "permissions": [],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7BC950"
+      }
+    },
+    "plugins": ["./plugins/withDinoAndroidRelease.js"]
+  }
+}
