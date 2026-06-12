@@ -4,7 +4,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppStateProvider, useAppState } from './src/core/appStateService';
@@ -25,8 +25,10 @@ function NavigationRoot() {
   }
 
   const navTheme = {
+    ...DefaultTheme,
     dark: false,
     colors: {
+      ...DefaultTheme.colors,
       primary: palette.jungle,
       background: theme.background,
       card: palette.white,
