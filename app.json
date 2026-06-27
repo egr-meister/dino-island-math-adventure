@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dino Island Math Adventure",
     "slug": "dino-island-math-adventure",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.dinoisland.mathadventure",
-      "versionCode": 2,
+      "versionCode": 3,
       "orientation": "portrait",
       "permissions": [],
       "adaptiveIcon": {
